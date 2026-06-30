@@ -1,0 +1,4 @@
+# Lingo v0.1.0 example
+# Hello World
+
+println "Hello, World!"
