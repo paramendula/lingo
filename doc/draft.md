@@ -99,11 +99,12 @@ Everything is Data.
 
 So, we have Objects.
 An Object has:
+
 - Metadata: Type and everything else that's not its direct data
 - Data: Its direct data
-Objects are contained in Memory.
-Objects are Data.
-Everything is an Object.
+  Objects are contained in Memory.
+  Objects are Data.
+  Everything is an Object.
 
 Object's Type defines its Data.
 
@@ -183,4 +184,25 @@ All in Metadata then.
 
 ---
 
+Eventual plan:
+Lingo 0.1.0 (almost fully C)
+Perpetual and eventual C->Lingo
+Keep the generated C files for bootstrapping
 
+The C code doesn't have to conform to Lingo semantics,
+but must implement them concisely.
+
+Lingo Parser is somewhat a tokenizer -
+it directly reads all atoms, but reads scoping structures
+delimiters as strings.
+For example: "(I love to eat 12.4 (tasty cupcakes) #true)"
+reads as: "(" 'I 'love 'to 'eat 12.4f "(" 'tasty 'cupcakes ")" #true ")"
+
+Constant strings ""
+Buffer strings @""
+Constant lists () []
+Buffer lists @() @[]
+
+Cell type not needed? (usize)
+
+---

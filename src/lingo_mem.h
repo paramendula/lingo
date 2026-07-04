@@ -7,12 +7,13 @@
 
 #include "lingo.h"
 
-/* lingo_alloc_type - Types of an allocation
+/* lingo_alloc_type - types of memory allocations for
+ * Lingo purposes.
  *
  */
 typedef enum lingo_alloc_type {
-    // Unknown
-    LingoAllocGeneral = 0,
+  // Unknown, generic allocation
+  LingoAllocGeneral = 0,
 } lingo_alloc_type;
 
 /* lingo_vt_alloc - Virtual table of an allocator.
@@ -23,7 +24,7 @@ typedef enum lingo_alloc_type {
  *  provided by passing a value from the enum
  *  'lingo_alloc_type' into parameter 't' (type).
  *  This allows an allocator to optimize allocation
- *  depending on the type of data being allocated.
+ *  depending on the type/purpose of data being allocated.
  *  Returns (succes): a valid pointer
  *  Returns (failure): a null (not enough memory).
  *
@@ -36,8 +37,8 @@ typedef enum lingo_alloc_type {
  *  Returns: nothing
  */
 typedef struct lingo_vt_allocator {
-    void *(*alloc)(void*, usize bytes, lingo_alloc_type t);
-    void (*free)(void*, void *ptr);
+  void *(*alloc)(void *, lingo_usize bytes, lingo_alloc_type t);
+  void (*free)(void *, void *ptr);
 } lingo_vt_allocator;
 
 #endif

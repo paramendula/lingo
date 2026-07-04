@@ -3,27 +3,27 @@
 
 #include <stdint.h>
 
-typedef uint8_t u8;
-typedef uint16_t u16;
-typedef uint32_t u32;
-typedef uint64_t u64;
-typedef uintmax_t usize;
+typedef uint8_t lingo_u8;
+typedef uint16_t lingo_u16;
+typedef uint32_t lingo_u32;
+typedef uint64_t lingo_u64;
+typedef uintmax_t lingo_usize;
 
-typedef int8_t i8;
-typedef int16_t i16;
-typedef int32_t i32;
-typedef int64_t i64;
-typedef intmax_t isize;
+typedef int8_t lingo_i8;
+typedef int16_t lingo_i16;
+typedef int32_t lingo_i32;
+typedef int64_t lingo_i64;
+typedef intmax_t lingo_isize;
 
-typedef uintmax_t cell;
+typedef uintmax_t lingo_cell;
 
-typedef float f32;
-typedef double f64;
+typedef float lingo_f32;
+typedef double lingo_f64;
 
-typedef u8 lbool;
+typedef lingo_u8 lingo_bool;
 
-#define LINGO_TRUE ((lbool)0xFF)
-#define LINGO_FALSE ((lbool)0)
+#define LINGO_TRUE ((lingo_bool)0xFF)
+#define LINGO_FALSE ((lingo_bool)0)
 #define LINGO_NULL 0
 
 typedef struct lingo {
