@@ -14,6 +14,8 @@
 typedef enum lingo_alloc_type {
   // Unknown, generic allocation
   LingoAllocGeneral = 0,
+  // Temporary Buffer
+  LingoAllocTempBuf,
 } lingo_alloc_type;
 
 /* lingo_vt_alloc - Virtual table of an allocator.

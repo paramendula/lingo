@@ -14,16 +14,23 @@ typedef struct lingo_read {
 
 typedef enum lingo_read_out_type {
   LingoReadStringConst = 0,
-  LingoReadStringTemp,
   LingoReadStringBuf,
+  // string read into a temporary buffer
+  // (must be manually copied or ignored)
+  LingoReadStringTemp,
   LingoReadError,
 } lingo_read_out_type;
 
 typedef struct lingo_read_out {
   lingo_read_out_type t;
   union {
+    // use lingo_read_error_cstr to get an error message
     int err_code;
-    const char *data;
+    // for reads into a temporary buffer
+    struct {
+      const char *data;
+      lingo_usize data_len;
+    };
   };
 } lingo_read_out;
 
@@ -48,6 +55,8 @@ int lingo_read_append_buf(lingo_read *p, lingo_str_buf *sb);
 int lingo_read_append_cstr(lingo_read *p, const char *cs, lingo_usize cs_len);
 
 int lingo_read_next(lingo_read *p, lingo_read_out *out);
+
+const char *lingo_read_error_cstr(int err_code);
 
 /* TODO: lingo_read precise control
  * seek, tell, peek and so on

@@ -192,7 +192,7 @@ Keep the generated C files for bootstrapping
 The C code doesn't have to conform to Lingo semantics,
 but must implement them concisely.
 
-Lingo Parser is somewhat a tokenizer -
+Lingo Reader is somewhat a tokenizer -
 it directly reads all atoms, but reads scoping structures
 delimiters as strings.
 For example: "(I love to eat 12.4 (tasty cupcakes) #true)"
@@ -206,3 +206,6 @@ Buffer lists @() @[]
 Cell type not needed? (usize)
 
 ---
+
+Type is identified by a Symbol.
+Symbol can be multipart (math.basic.multiply)
