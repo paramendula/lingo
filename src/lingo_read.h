@@ -5,11 +5,19 @@
 #include "lingo_mem.h"
 #include "lingo_str.h"
 
+// Allocate string buffers and const strings using alloc VT
+#define LINGO_READ_ALLOC_STR ((lingo_u32)1)
+// Allocate symbols using alloc VT
+#define LINGO_READ_ALLOC_SYM ((lingo_u32)2)
+
 /* lingo_read - lingo reader state & options
  *
  */
 typedef struct lingo_read {
+  // Options
   lingo_vt_allocator *mem;
+  lingo_u32 flags;
+  // Read-only
 } lingo_read;
 
 typedef enum lingo_read_out_type {
@@ -18,6 +26,10 @@ typedef enum lingo_read_out_type {
   // string read into a temporary buffer
   // (must be manually copied or ignored)
   LingoReadStringTemp,
+  LingoReadSymbol,
+  // symbol read into a temporary buffer
+  // (must be manually copied or ignored)
+  LingoReadSymbolTemp,
   LingoReadError,
 } lingo_read_out_type;
 
@@ -28,7 +40,7 @@ typedef struct lingo_read_out {
     int err_code;
     // for reads into a temporary buffer
     struct {
-      const char *data;
+      const u8 *data;
       lingo_usize data_len;
     };
   };
@@ -54,12 +66,19 @@ int lingo_read_append_buf(lingo_read *p, lingo_str_buf *sb);
  */
 int lingo_read_append_cstr(lingo_read *p, const char *cs, lingo_usize cs_len);
 
+/* Returns 0 if succes, the result is written to *out.
+ * -1 if a fatal error occured.
+ * 1 if data ended mid-read, meaning append more data or
+ *   incomplete/wrong data.
+ *
+ */
 int lingo_read_next(lingo_read *p, lingo_read_out *out);
 
 const char *lingo_read_error_cstr(int err_code);
 
 /* TODO: lingo_read precise control
  * seek, tell, peek and so on
+ * append stream
  */
 
 #endif
