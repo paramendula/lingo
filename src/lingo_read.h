@@ -46,25 +46,25 @@ typedef struct lingo_read_out {
   };
 } lingo_read_out;
 
-int lingo_read_init(lingo_read *p);
-int lingo_read_deinit(lingo_read *p);
+int lingo_read_init(lingo_read *r);
+int lingo_read_deinit(lingo_read *r);
 
 /* Empty the string queue,
  * clean all the counters, essentialy
- * reseting 'p' to the state it were in
- * after calling lingo_read_init with 'p'.
+ * reseting 'r' to the state it were in
+ * after calling lingo_read_init with 'r'.
  */
-int lingo_read_reset(lingo_read *p);
+int lingo_read_reset(lingo_read *r);
 
-int lingo_read_append_const(lingo_read *p, lingo_str_const *sc);
-int lingo_read_append_buf(lingo_read *p, lingo_str_buf *sb);
+int lingo_read_append_const(lingo_read *r, lingo_str_const *sc);
+int lingo_read_append_buf(lingo_read *r, lingo_str_buf *sb);
 
 /* It's up to this function's caller to ensure that
  * cs_len is valid and the c-string 'cs' is valid until
  * either lingo_read_deinit or lingo_read_reset are called,
- * or any lingo_read_* function aren't called with 'p'.
+ * or any lingo_read_* function aren't called with 'r'.
  */
-int lingo_read_append_cstr(lingo_read *p, const char *cs, lingo_usize cs_len);
+int lingo_read_append_cstr(lingo_read *r, const char *cs, lingo_usize cs_len);
 
 /* Returns 0 if succes, the result is written to *out.
  * -1 if a fatal error occured.
@@ -72,7 +72,7 @@ int lingo_read_append_cstr(lingo_read *p, const char *cs, lingo_usize cs_len);
  *   incomplete/wrong data.
  *
  */
-int lingo_read_next(lingo_read *p, lingo_read_out *out);
+int lingo_read_next(lingo_read *r, lingo_read_out *out);
 
 const char *lingo_read_error_cstr(int err_code);
 
