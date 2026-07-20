@@ -209,3 +209,14 @@ Cell type not needed? (usize)
 
 Type is identified by a Symbol.
 Symbol can be multipart (math.basic.multiply)
+
+---
+
+Rewrite in Zig.
+Zig allows for better initial control. The toolchain is also more convenient and neat.
+Zig 0.16.0?
+Is it possible to integrate Zig toolchain directly into Lingo binary? Probably yes
+
+---
+
+
