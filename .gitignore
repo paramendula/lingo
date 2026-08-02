@@ -1,2 +1,5 @@
-out
-*.swp
+.zig-cache/
+zig-out/
+build/
+build-*/
+docgen_tmp/

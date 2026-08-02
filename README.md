@@ -19,7 +19,7 @@ Planned to be:
 
 'Quasi-compiled' in context of Lingo means built-in:
 - JIT compilation
-- Interpreter and compiler used by the language being accessable with an API (programmable)
+- Interpreter and compiler used by the language being accessible with an API (programmable)
 - Lingo instance is a compiler instance
 
 Contribution rules:
