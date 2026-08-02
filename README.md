@@ -12,7 +12,7 @@ Planned to be:
 - Lightweight (under 1MiB limit for now)
 - Highly performant (in par with C/Rust)
 - Consistent (not 'read-only' like Forth or some quirky Lisps)
-- Not overly complex (too simple isn't good neither)
+- Not overly complex (too simple isn't good either)
 - Quasi-compiled
 - Reflective (meta, meaning an instance can see everything about itself)
 - Written in Zig (initially, self-written is a goal)
