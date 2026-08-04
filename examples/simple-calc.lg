@@ -5,4 +5,12 @@ println "Lingo: Simple Calculator v0.1.0"
 
 loop {
   # TODO
+  # Input:
+  #  Get input line from stdin
+  #  Convert line string into AST
+  # Process
+  #  Check AST for errors
+  #  Act on AST
+  # Output
+  #  Print resulting number into stdout
 }
