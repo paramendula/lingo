@@ -1,16 +1,16 @@
-# Lingo v0.1.0 example
+# Lingo v0.1.x example
 # Simple Calculator
 
-println "Lingo: Simple Calculator v0.1.0"
+println "Lingo 0.1.x: Simple Calculator"
 
 loop {
   # TODO
   # Input:
   #  Get input line from stdin
   #  Convert line string into AST
-  # Process
+  # Process:
   #  Check AST for errors
-  #  Act on AST
-  # Output
+  #  Collapse AST until one number is left
+  # Output:
   #  Print resulting number into stdout
 }

@@ -51,6 +51,9 @@ pub const InitError = error{
     /// Returned when the 'return_buffer_slices' flag isn't set, but
     /// no allocator has been provided
     AllocatorNotProvided,
+    /// Returned when the 'return_buffer_slices' flag is set, but
+    /// the provided reader isn't fixed (std.Io.Reader.fixed)
+    ReaderNotFixed,
 };
 
 pub const ReadError = error{
@@ -69,15 +72,22 @@ pub fn Reader(comptime opts: Options) type {
     return struct {
         byte_reader: std.Io.Reader,
         allocator: ?std.mem.Allocator,
-        current_kind: ?TokenKind,
+        current_kind: ?TokenKind = null,
 
         const Self = @This();
 
-        pub fn init(byte_reader: std.Io.Reader, allocator: ?std.mem.Allocator) InitError!Reader {
+        /// Initialize a new token Reader.
+        /// If return_buffer_slices flag is set, byte_reader must be
+        /// made with std.Io.Reader.fixed function. If not, an allocator
+        /// must be provided.
+        pub fn init(byte_reader: std.Io.Reader, allocator: ?std.mem.Allocator) InitError!Self {
             if (opts.return_buffer_slices) {
-                // TODO: check if fixed
-            } else if (!allocator) {
-                return .AllocatorNotProvided;
+                // check if byte_reader has fixed buffer
+                if (byte_reader.end != byte_reader.buffer.len) {
+                    return InitError.ReaderNotFixed;
+                }
+            } else if (allocator == null) {
+                return InitError.AllocatorNotProvided;
             }
 
             return Self{
@@ -91,22 +101,47 @@ pub fn Reader(comptime opts: Options) type {
         }
 
         pub fn next(self: *Self) ReadError!Token {
-            const byte = self.byte_reader.takeByte() orelse return .EndOfStream;
-            if (self.current_kind) |k| {
-                _ = k;
-            } else {
-                switch (byte) {
-                    '(' => return .parenOpen,
-                    ')' => return .parenClose,
-                    '[' => return .parenOpenSquare,
-                    ']' => return .parenCloseSquare,
-                    '{' => return .parenOpenCurly,
-                    '}' => return .parenCloseCurly,
-                    '.' => return .dot,
-                    '@' => return .at,
-                    ';' => return .semicolon,
+            while (true) {
+                const byte = self.byte_reader.takeByte() orelse return ReadError.EndOfStream;
+                if (self.current_kind) |k| {
+                    _ = k;
+                } else {
+                    switch (byte) {
+                        ' ' => continue,
+                        '\t' => continue,
+                        // '\r\n' check, otherwise just whitespace
+                        '\r' => self.current_kind = .newLine,
+                        '(' => return .parenOpen,
+                        ')' => return .parenClose,
+                        '[' => return .parenOpenSquare,
+                        ']' => return .parenCloseSquare,
+                        '{' => return .parenOpenCurly,
+                        '}' => return .parenCloseCurly,
+                        '.' => return .dot,
+                        '@' => return .at,
+                        ';' => return .semicolon,
+                        '\n' => return .newLine,
+                        '"' => self.current_kind = .string,
+                        '#' => self.current_kind = .special,
+                        // comma/commaStar check
+                        ',' => self.current_kind = .comma,
+                        else => {
+                            // symbol character
+                            // digit
+                        },
+                    }
                 }
             }
         }
     };
+}
+
+test "no allocator must fail" {
+    try std.testing.expect(Reader(.{}).init(std.Io.Reader.fixed(""), null) == InitError.AllocatorNotProvided);
+}
+
+test "not fixed buffer with RBS flag must fail" {
+    var b = [_]u8{1} ** 16;
+    const file_reader = std.Io.File.stdin().reader(std.testing.io, &b).interface;
+    try std.testing.expect(Reader(.{ .return_buffer_slices = true }).init(file_reader, null) == InitError.ReaderNotFixed);
 }
