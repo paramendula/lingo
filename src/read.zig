@@ -1,5 +1,17 @@
 const std = @import("std");
 
+/// Can a symbol (or symbol part) begin with the character 'ch'?
+pub fn is_symbol_char_beg(ch: u8) bool {
+    return std.ascii.isAlphabetic(ch) or ch == '_' or ch == '+' or ch == '-' or
+        ch == '!' or ch == '$' or ch == '*' or ch == '^' or ch == ':' or
+        ch == '&' or ch == '?' or ch == '=' or ch == '%';
+}
+
+/// Can a symbol (or symbol part) have the character 'ch' as its part (but not begin with)?
+pub fn is_symbol_char(ch: u8) bool {
+    return is_symbol_char(ch) or std.ascii.isDigit(ch);
+}
+
 pub const TokenKind = enum(i32) {
     /// -> '('
     parenOpen,
@@ -68,11 +80,14 @@ pub const ReadError = error{
     EndOfStream,
 };
 
+/// Lingo basic tokenizer (Reader)
 pub fn Reader(comptime opts: Options) type {
     return struct {
         byte_reader: std.Io.Reader,
         allocator: ?std.mem.Allocator,
-        current_kind: ?TokenKind = null,
+        cur_kind: ?TokenKind = null,
+        cur_line: u32,
+        cur_char: u32,
 
         const Self = @This();
 
@@ -103,14 +118,24 @@ pub fn Reader(comptime opts: Options) type {
         pub fn next(self: *Self) ReadError!Token {
             while (true) {
                 const byte = self.byte_reader.takeByte() orelse return ReadError.EndOfStream;
-                if (self.current_kind) |k| {
-                    _ = k;
+                if (self.cur_kind) |k| {
+                    switch (k) {
+                        // '\r\n' check
+                        .newLine => {
+                            self.cur_kind = null;
+                            if (byte == '\n') return .newLine;
+                            self.byte_reader.seek -= 1;
+                        },
+                        else => {
+                            std.debug.panic("Lingo Reader (tokenizer) got into a faulty state (unexpected self.current_kind\n", .{});
+                        },
+                    }
                 } else {
                     switch (byte) {
                         ' ' => continue,
                         '\t' => continue,
                         // '\r\n' check, otherwise just whitespace
-                        '\r' => self.current_kind = .newLine,
+                        '\r' => self.cur_kind = .newLine,
                         '(' => return .parenOpen,
                         ')' => return .parenClose,
                         '[' => return .parenOpenSquare,
@@ -121,10 +146,10 @@ pub fn Reader(comptime opts: Options) type {
                         '@' => return .at,
                         ';' => return .semicolon,
                         '\n' => return .newLine,
-                        '"' => self.current_kind = .string,
-                        '#' => self.current_kind = .special,
+                        '"' => self.cur_kind = .string,
+                        '#' => self.cur_kind = .special,
                         // comma/commaStar check
-                        ',' => self.current_kind = .comma,
+                        ',' => self.cur_kind = .comma,
                         else => {
                             // symbol character
                             // digit
@@ -136,7 +161,7 @@ pub fn Reader(comptime opts: Options) type {
     };
 }
 
-test "no allocator must fail" {
+test "providing no allocator must fail" {
     try std.testing.expect(Reader(.{}).init(std.Io.Reader.fixed(""), null) == InitError.AllocatorNotProvided);
 }
 
