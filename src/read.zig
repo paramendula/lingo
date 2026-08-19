@@ -1,3 +1,7 @@
+//! Lingo basic Reader (tokenizer) implementation and auxiliary functions.
+//! The end goal is to make the Parser less complex by offloading basic syntax
+//! to the Reader.
+
 const std = @import("std");
 
 /// Can a symbol (or symbol part) begin with the character 'ch'?
@@ -7,9 +11,9 @@ pub fn is_symbol_char_beg(ch: u8) bool {
         ch == '&' or ch == '?' or ch == '=' or ch == '%';
 }
 
-/// Can a symbol (or symbol part) have the character 'ch' as its part (but not begin with)?
+/// Can a symbol (or symbol part) have the character 'ch' as its part (but not necessarily begin with)?
 pub fn is_symbol_char(ch: u8) bool {
-    return is_symbol_char(ch) or std.ascii.isDigit(ch);
+    return is_symbol_char_beg(ch) or std.ascii.isDigit(ch);
 }
 
 pub const TokenKind = enum(i32) {
