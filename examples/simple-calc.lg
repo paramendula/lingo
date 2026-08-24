@@ -1,16 +1,24 @@
-# Lingo v0.1.x example
+# Lingo v0.1.0 example
 # Simple Calculator
 
-println "Lingo 0.1.x: Simple Calculator"
+println "Lingo 0.1.0: Simple Calculator"
 
 loop {
-  # TODO
-  # Input:
   #  Get input line from stdin
+  def line (stdin.getline)
+  if (or (not line) (= line.len 0)) \
+    (continue)
+
   #  Convert line string into AST
-  # Process:
+
   #  Check AST for errors
+
   #  Collapse AST until one number is left
-  # Output:
+
   #  Print resulting number into stdout
+
+}
+
+def (parse str) {
+
 }
