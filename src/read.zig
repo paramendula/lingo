@@ -31,7 +31,7 @@ pub const TokenKind = enum(i32) {
     parenCloseCurly,
     /// Standalone or multipart
     symbol,
-    /// Just a string
+    /// Anything between ""
     string,
     /// Starts with a '#', e.g. '#true'
     special,
@@ -39,6 +39,8 @@ pub const TokenKind = enum(i32) {
     integer,
     /// Floating point
     real,
+    /// -> ' <-
+    apostrophe,
     /// -> '.' (tail specifier)
     dot,
     /// -> ',' (unquote)
@@ -130,8 +132,20 @@ pub fn Reader(comptime opts: Options) type {
                             if (byte == '\n') return .newLine;
                             self.byte_reader.seek -= 1;
                         },
+                        // ',' or ',*' check
+                        .comma => {
+                            self.cur_kind = null;
+                            if (byte == '*') return .commaStar;
+                            self.byte_reader.seek -= 1;
+                            return .comma;
+                        },
+                        .string => {},
+                        .special => {},
+                        .integer => {},
+                        .real => {},
+                        .symbol => {},
                         else => {
-                            std.debug.panic("Lingo Reader (tokenizer) got into a faulty state (unexpected self.current_kind\n", .{});
+                            std.debug.panic("Lingo Reader (tokenizer) got into a faulty state (unexpected self.cur_kind)\n", .{});
                         },
                     }
                 } else {
@@ -146,6 +160,7 @@ pub fn Reader(comptime opts: Options) type {
                         ']' => return .parenCloseSquare,
                         '{' => return .parenOpenCurly,
                         '}' => return .parenCloseCurly,
+                        '\'' => return .apostrophe,
                         '.' => return .dot,
                         '@' => return .at,
                         ';' => return .semicolon,
