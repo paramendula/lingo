@@ -10,6 +10,8 @@ loop {
     (continue)
 
   #  Convert line string into AST
+  def ast (parse line)
+  if (not line) (continue)
 
   #  Check AST for errors
 
@@ -19,6 +21,7 @@ loop {
 
 }
 
+# number, prefix, infix
 def (parse str) {
-
+  
 }
